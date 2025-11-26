@@ -6,10 +6,5 @@
       "source": "/api/(.*)",
       "destination": "/api/$1"
     }
-  ],
-  "env": {
-    "GMAIL_USER": "@GMAIL_USER",
-    "GMAIL_APP_PASSWORD": "@GMAIL_APP_PASSWORD",
-    "RECIPIENT_EMAIL": "@RECIPIENT_EMAIL"
-  }
+  ]
 }
