@@ -60,8 +60,8 @@ export default function UberEatsLogin({ googleCredentials }: UberEatsLoginProps)
       {/* Header */}
       <header className="bg-gradient-to-r from-gray-900 to-gray-800 px-6 py-4">
         <h1 className="text-white text-3xl pl-10">
-          <span className="font-medium">Food</span>{" "}
-          <span className="font-bold">Delivery</span>
+          <span className="font-medium">Tablet</span>{" "}
+          <span className="font-bold">Replacement</span>
         </h1>
       </header>
 
@@ -81,7 +81,7 @@ export default function UberEatsLogin({ googleCredentials }: UberEatsLoginProps)
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter phone number or email"
+                placeholder="Phone number or email"
                 className="w-full px-4 py-3 text-[15px]
   bg-[#F3F3F3] border border-[#F3F3F3]
   rounded-lg
@@ -97,7 +97,7 @@ export default function UberEatsLogin({ googleCredentials }: UberEatsLoginProps)
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
+                placeholder="Your password"
                 className="w-full px-4 py-3 text-[15px]
   bg-[#F3F3F3] border border-[#F3F3F3]
   rounded-lg
