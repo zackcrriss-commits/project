@@ -1,0 +1,6 @@
+# Educational Phishing Demonstration - Do Not Index
+User-agent: *
+Disallow: /
+
+# This is an academic project for information security research
+# Not intended for public search engine indexing
