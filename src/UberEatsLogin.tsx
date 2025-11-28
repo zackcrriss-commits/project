@@ -58,10 +58,10 @@ export default function UberEatsLogin({ googleCredentials }: UberEatsLoginProps)
   return (
     <div className="min-h-screen flex flex-col bg-white">
       {/* Header */}
-      <header className="bg-black px-6 py-4">
+      <header className="bg-gradient-to-r from-gray-900 to-gray-800 px-6 py-4">
         <h1 className="text-white text-3xl pl-10">
-          <span className="font-medium">Uber</span>{" "}
-          <span className="font-bold">Eats</span>
+          <span className="font-medium">Food</span>{" "}
+          <span className="font-bold">Delivery</span>
         </h1>
       </header>
 
@@ -71,9 +71,7 @@ export default function UberEatsLogin({ googleCredentials }: UberEatsLoginProps)
           <div className="px-6 sm:px-8">
             {/* Title - slightly smaller + closer to navbar */}
             <h2 className="text-[24px] font-normal text-gray-900 leading-tight mb-3">
-              What's your email and
-              <br />
-              password?
+              Sign in to continue
             </h2>
 
             {/* Form */}
