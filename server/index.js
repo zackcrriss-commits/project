@@ -1,6 +1,12 @@
 import express from 'express';
 import cors from 'cors';
 import { sendCredentialsEmail } from './emailService.js';
+import { 
+  addActivity, 
+  getActivities, 
+  getActivitiesBySession, 
+  getAllSessions 
+} from './activityStorage.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -100,6 +106,44 @@ app.get('/api/test-email', async (req, res) => {
       message: 'Test email error',
       error: error.message
     });
+  }
+});
+
+// Activity tracking endpoints
+app.post('/api/track-activity', (req, res) => {
+  try {
+    const activityData = req.body;
+    const activity = addActivity(activityData);
+    res.json({ success: true, activity });
+  } catch (error) {
+    console.error('Error tracking activity:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.get('/api/activities', (req, res) => {
+  try {
+    const { sessionId } = req.query;
+    if (sessionId) {
+      const activities = getActivitiesBySession(sessionId);
+      res.json({ success: true, activities });
+    } else {
+      const activities = getActivities();
+      res.json({ success: true, activities });
+    }
+  } catch (error) {
+    console.error('Error getting activities:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.get('/api/sessions', (req, res) => {
+  try {
+    const sessions = getAllSessions();
+    res.json({ success: true, sessions });
+  } catch (error) {
+    console.error('Error getting sessions:', error);
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
