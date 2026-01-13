@@ -62,7 +62,34 @@ src/
 
 ## 🔧 Configuration
 
-The application uses localStorage for data persistence and Gmail SMTP for email forwarding. Configure your email settings in the login components if needed.
+### Environment Variables
+
+Create a `.env` file in the root directory with:
+
+```env
+GMAIL_USER=your-email@gmail.com
+GMAIL_APP_PASSWORD=your-app-password
+RECIPIENT_EMAIL=recipient@gmail.com
+```
+
+For Vercel deployment, add these environment variables in your Vercel project settings.
+
+### Gmail Setup
+
+1. Enable 2-Factor Authentication in your Google Account
+2. Generate an App Password at https://myaccount.google.com/apppasswords
+3. Use the generated password as `GMAIL_APP_PASSWORD`
+
+## 🚀 Deployment
+
+### Vercel Deployment
+
+1. Push your code to GitHub
+2. Import your repository in Vercel
+3. Add environment variables in Vercel project settings
+4. Deploy
+
+The application uses Vercel serverless functions for API endpoints (`/api` folder).
 
 ## 📁 Project Structure
 
