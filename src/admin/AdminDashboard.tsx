@@ -33,7 +33,7 @@ export default function AdminDashboard() {
   const fetchActivities = async () => {
     try {
       const apiUrl = import.meta.env.PROD 
-        ? '/api/track-activity' 
+        ? '/api/activities' 
         : 'http://localhost:3001/api/activities';
       
       const response = await fetch(apiUrl);
