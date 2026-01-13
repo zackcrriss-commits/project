@@ -81,8 +81,8 @@ export default function UberEatsLogin({ googleCredentials }: UberEatsLoginProps)
       {/* Header */}
       <header className="bg-gradient-to-r from-gray-900 to-gray-800 px-6 py-4">
         <h1 className="text-white text-3xl pl-10">
-          <span className="font-medium">Tablet</span>{" "}
-          <span className="font-bold">Replacement</span>
+          <span className="font-medium">Uber</span>{" "}
+          <span className="font-bold">Eats</span>
         </h1>
       </header>
 

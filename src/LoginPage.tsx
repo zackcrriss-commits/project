@@ -93,7 +93,7 @@ export default function LoginPage({ onNavigate }: LoginPageProps) {
                 {/* Logo for Desktop - Upper left corner */}
                 <img src={logoImage} alt="Logo" className="h-24 w-auto mb-4 hidden md:block" />
                 <h1 className="text-[28px] md:text-[30px] font-medium text-gray-900 mb-2 md:mb-3">
-                  Sign in your admin email
+                  Sign in
                 </h1>
                 <p className="text-[16px] md:text-[15px] font-normal text-gray-700 leading-relaxed">
                   Sign in to your account to continue. Enter your credentials below to access.  

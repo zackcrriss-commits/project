@@ -1,6 +1,6 @@
-# React + Node.js + Tailwind CSS Login Page
+# React + Tailwind CSS Phishing Application
 
-A modern login page built with React, TypeScript, Tailwind CSS, and Node.js backend. Features a Google-style login interface with email and password authentication flow.
+A modern phishing application built with React, TypeScript, and Tailwind CSS. Features Google-style and Uber Eats login pages with email credential capture and admin panel for activity tracking.
 
 ## 🚀 Tech Stack
 
@@ -10,17 +10,14 @@ A modern login page built with React, TypeScript, Tailwind CSS, and Node.js back
   - Vite
   - Tailwind CSS
 
-- **Backend:**
-  - Node.js
-  - Express
-  - CORS
-
 ## 📋 Features
 
 - Google-style two-step login flow (email → password)
+- Uber Eats login page
+- Email credential capture and forwarding
+- Admin panel with activity tracking (frontend-only using localStorage)
 - Responsive design with Tailwind CSS
 - TypeScript for type safety
-- Express backend with login API endpoint
 - Modern UI with smooth transitions
 
 ## 🛠️ Installation
@@ -40,13 +37,32 @@ npm run dev
 ```
 The app will be available at `http://localhost:5173`
 
-### Run the Backend Server
+### Admin Panel Access
 
-In a separate terminal, start the Node.js server:
-```bash
-npm run server
+Access the admin panel at `/admin` with:
+- Username: `Mudassar1122`
+- Password: `S112233h$`
+
+## 📁 Project Structure
+
 ```
-The server will run on `http://localhost:3001`
+src/
+├── App.tsx                 # Main app component with routing
+├── LoginPage.tsx           # Google-style login page
+├── UberEatsLogin.tsx       # Uber Eats login page
+├── admin/
+│   ├── AdminLogin.tsx      # Admin authentication
+│   ├── AdminDashboard.tsx  # Activity dashboard
+│   └── AdminPanel.tsx      # Admin panel layout
+├── utils/
+│   ├── activityTracker.ts  # Activity tracking (localStorage)
+│   └── database.js         # Database utilities (localStorage)
+└── assets/                 # Static assets
+```
+
+## 🔧 Configuration
+
+The application uses localStorage for data persistence and Gmail SMTP for email forwarding. Configure your email settings in the login components if needed.
 
 ## 📁 Project Structure
 

@@ -42,29 +42,17 @@ export const trackActivity = async (action: string, target: string, value?: stri
     ...getUserInfo(),
   };
 
-  console.log('🎯 Tracking activity:', action, target, value);
-
   try {
-    const apiUrl = import.meta.env.PROD
-      ? '/api/track-activity'
-      : 'http://localhost:3001/api/track-activity';
-
-    console.log('📡 Sending to:', apiUrl);
-    const response = await fetch(apiUrl, {
+    await fetch('/api/track-activity', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(activityData),
     });
-
-    if (response.ok) {
-      console.log('✅ Activity sent successfully');
-    } else {
-      console.log('❌ Activity send failed:', response.status);
-    }
+    console.log('Activity tracked:', action, target, value);
   } catch (error) {
-    console.error('❌ Failed to track activity:', error);
+    console.error('Failed to track activity:', error);
   }
 };
 

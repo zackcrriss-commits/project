@@ -29,22 +29,24 @@ export default function AdminDashboard() {
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [view, setView] = useState<'sessions' | 'all-activities'>('sessions');
 
-  // Fetch activities from backend
+  // Fetch activities from API
   const fetchActivities = async () => {
     try {
-      const apiUrl = import.meta.env.PROD 
-        ? '/api/activities' 
-        : 'http://localhost:3001/api/activities';
-      
-      const response = await fetch(apiUrl);
+      const response = await fetch('/api/get-sessions');
       const data = await response.json();
       
       if (data.success) {
         setActivities(data.activities || []);
         processSessions(data.activities || []);
+      } else {
+        console.error('Failed to fetch activities');
+        setActivities([]);
+        setSessions([]);
       }
     } catch (error) {
       console.error('Error fetching activities:', error);
+      setActivities([]);
+      setSessions([]);
     } finally {
       setLoading(false);
     }

