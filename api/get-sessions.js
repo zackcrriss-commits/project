@@ -1,12 +1,9 @@
 // Vercel Serverless Function - Get Sessions
-// Retrieves session data from PostgreSQL database
+// Note: This shares memory with track-activity (same deployment)
 
-import {
-  getAllSessions,
-  getSessionsByDateRange,
-  initializeDatabase,
-  testConnection
-} from '../src/utils/database.js';
+// Import the activities store from track-activity
+// In serverless, we need a shared data layer - using import won't work
+// We'll fetch from track-activity endpoint instead
 
 export default async function handler(req, res) {
   // Handle CORS
@@ -23,39 +20,17 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Initialize database connection and tables
-    await testConnection();
-    await initializeDatabase();
-  } catch (error) {
-    console.error('Database initialization failed:', error);
-    return res.status(500).json({
-      error: 'Database connection failed',
-      details: error.message
-    });
-  }
-
-  try {
-    const { startDate, endDate, limit = 1000 } = req.query;
-
-    let sessions;
-
-    if (startDate && endDate) {
-      // Get sessions within date range
-      sessions = await getSessionsByDateRange(startDate, endDate);
-    } else {
-      // Get all sessions
-      sessions = await getAllSessions(parseInt(limit));
-    }
-
-    return res.status(200).json({
-      success: true,
-      sessions: sessions
+    // Since we can't share memory between serverless functions easily,
+    // we'll process activities from the track-activity endpoint
+    // For now, return a message that sessions are part of activities
+    
+    return res.status(200).json({ 
+      success: true, 
+      message: 'Use /api/track-activity?sessionId=xxx to get session activities',
+      sessions: []
     });
   } catch (error) {
     console.error('Error getting sessions:', error);
-    return res.status(500).json({
-      error: 'Failed to get sessions',
-      details: error.message
-    });
+    return res.status(500).json({ error: 'Failed to get sessions', details: error.message });
   }
 }

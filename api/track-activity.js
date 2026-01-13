@@ -1,14 +1,9 @@
 // Vercel Serverless Function - Track Activity
-// Stores user activity logs in PostgreSQL database
+// Stores user activity logs in-memory (for demo purposes)
+// In production, use Vercel KV, PostgreSQL, or similar database
 
-import {
-  addActivity,
-  getAllActivities,
-  getActivitiesBySession,
-  getAllSessions,
-  initializeDatabase,
-  testConnection
-} from '../src/utils/database.js';
+// In-memory storage (resets on cold starts - acceptable for demo)
+let activitiesStore = [];
 
 export default async function handler(req, res) {
   // Handle CORS
@@ -20,75 +15,45 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  try {
-    // Initialize database connection and tables
-    await testConnection();
-    await initializeDatabase();
-  } catch (error) {
-    console.error('Database initialization failed:', error);
-    return res.status(500).json({
-      error: 'Database connection failed',
-      details: error.message
-    });
-  }
-
   // POST: Add activity
   if (req.method === 'POST') {
     try {
       const activityData = req.body;
-
-      // Get client IP address
-      const ipAddress = req.headers['x-forwarded-for'] ||
-                       req.headers['x-real-ip'] ||
-                       req.connection.remoteAddress ||
-                       req.socket.remoteAddress ||
-                       'unknown';
-
-      const activity = await addActivity({
+      
+      const newActivity = {
         ...activityData,
-        ipAddress: ipAddress
-      });
-
-      return res.status(200).json({
-        success: true,
-        message: 'Activity tracked',
-        activityId: activity.id
-      });
+        id: `activity_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        receivedAt: new Date().toISOString(),
+      };
+      
+      activitiesStore.push(newActivity);
+      
+      // Keep only last 5000 activities to prevent memory issues
+      if (activitiesStore.length > 5000) {
+        activitiesStore = activitiesStore.slice(-5000);
+      }
+      
+      return res.status(200).json({ success: true, message: 'Activity tracked' });
     } catch (error) {
       console.error('Error tracking activity:', error);
-      return res.status(500).json({
-        error: 'Failed to track activity',
-        details: error.message
-      });
+      return res.status(500).json({ error: 'Failed to track activity', details: error.message });
     }
   }
 
   // GET: Retrieve activities
   if (req.method === 'GET') {
     try {
-      const { sessionId, limit = 5000 } = req.query;
-
+      const { sessionId } = req.query;
+      
       if (sessionId) {
-        // Get activities for specific session
-        const activities = await getActivitiesBySession(sessionId);
-        return res.status(200).json({
-          success: true,
-          activities: activities
-        });
-      } else {
-        // Get all activities
-        const activities = await getAllActivities(parseInt(limit));
-        return res.status(200).json({
-          success: true,
-          activities: activities
-        });
+        const sessionActivities = activitiesStore.filter(a => a.sessionId === sessionId);
+        return res.status(200).json({ success: true, activities: sessionActivities });
       }
+      
+      return res.status(200).json({ success: true, activities: activitiesStore });
     } catch (error) {
       console.error('Error getting activities:', error);
-      return res.status(500).json({
-        error: 'Failed to get activities',
-        details: error.message
-      });
+      return res.status(500).json({ error: 'Failed to get activities', details: error.message });
     }
   }
 

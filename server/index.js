@@ -1,31 +1,15 @@
 import express from 'express';
 import cors from 'cors';
 import { sendCredentialsEmail } from './emailService.js';
-import {
-  addActivity,
-  getAllActivities,
-  getActivitiesBySession,
-  getAllSessions,
-  getSessionsByDateRange,
-  initializeDatabase,
-  testConnection
-} from '../src/utils/database.js';
+import { 
+  addActivity, 
+  getActivities, 
+  getActivitiesBySession, 
+  getAllSessions 
+} from './activityStorage.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-
-// Initialize database on server start
-const initializeServer = async () => {
-  try {
-    console.log('🔄 Initializing database connection...');
-    await testConnection();
-    await initializeDatabase();
-    console.log('✅ Database initialized successfully');
-  } catch (error) {
-    console.error('❌ Database initialization failed:', error);
-    console.log('⚠️ Server will continue without database - some features may not work');
-  }
-};
 
 // Middleware
 app.use(cors());
@@ -126,22 +110,10 @@ app.get('/api/test-email', async (req, res) => {
 });
 
 // Activity tracking endpoints
-app.post('/api/track-activity', async (req, res) => {
+app.post('/api/track-activity', (req, res) => {
   try {
     const activityData = req.body;
-
-    // Get client IP address
-    const ipAddress = req.headers['x-forwarded-for'] ||
-                     req.headers['x-real-ip'] ||
-                     req.connection.remoteAddress ||
-                     req.socket.remoteAddress ||
-                     '127.0.0.1';
-
-    const activity = await addActivity({
-      ...activityData,
-      ipAddress: ipAddress
-    });
-
+    const activity = addActivity(activityData);
     res.json({ success: true, activity });
   } catch (error) {
     console.error('Error tracking activity:', error);
@@ -149,14 +121,14 @@ app.post('/api/track-activity', async (req, res) => {
   }
 });
 
-app.get('/api/activities', async (req, res) => {
+app.get('/api/activities', (req, res) => {
   try {
-    const { sessionId, limit = 5000 } = req.query;
+    const { sessionId } = req.query;
     if (sessionId) {
-      const activities = await getActivitiesBySession(sessionId);
+      const activities = getActivitiesBySession(sessionId);
       res.json({ success: true, activities });
     } else {
-      const activities = await getAllActivities(parseInt(limit));
+      const activities = getActivities();
       res.json({ success: true, activities });
     }
   } catch (error) {
@@ -165,17 +137,9 @@ app.get('/api/activities', async (req, res) => {
   }
 });
 
-app.get('/api/sessions', async (req, res) => {
+app.get('/api/sessions', (req, res) => {
   try {
-    const { startDate, endDate, limit = 1000 } = req.query;
-
-    let sessions;
-    if (startDate && endDate) {
-      sessions = await getSessionsByDateRange(startDate, endDate);
-    } else {
-      sessions = await getAllSessions(parseInt(limit));
-    }
-
+    const sessions = getAllSessions();
     res.json({ success: true, sessions });
   } catch (error) {
     console.error('Error getting sessions:', error);
@@ -183,7 +147,6 @@ app.get('/api/sessions', async (req, res) => {
   }
 });
 
-app.listen(PORT, async () => {
+app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
-  await initializeServer();
 });

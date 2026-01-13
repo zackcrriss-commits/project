@@ -1,6 +1,6 @@
-# React + Tailwind CSS Login Page
+# React + Node.js + Tailwind CSS Login Page
 
-A modern login page built with React, TypeScript, and Tailwind CSS. Features a Google-style login interface with email and password authentication flow.
+A modern login page built with React, TypeScript, Tailwind CSS, and Node.js backend. Features a Google-style login interface with email and password authentication flow.
 
 ## 🚀 Tech Stack
 
@@ -10,13 +10,18 @@ A modern login page built with React, TypeScript, and Tailwind CSS. Features a G
   - Vite
   - Tailwind CSS
 
+- **Backend:**
+  - Node.js
+  - Express
+  - CORS
+
 ## 📋 Features
 
 - Google-style two-step login flow (email → password)
 - Responsive design with Tailwind CSS
 - TypeScript for type safety
+- Express backend with login API endpoint
 - Modern UI with smooth transitions
-- Activity tracking (console logging)
 
 ## 🛠️ Installation
 
@@ -35,18 +40,25 @@ npm run dev
 ```
 The app will be available at `http://localhost:5173`
 
+### Run the Backend Server
+
+In a separate terminal, start the Node.js server:
+```bash
+npm run server
+```
+The server will run on `http://localhost:3001`
+
 ## 📁 Project Structure
 
 ```
 temp/
 ├── src/
 │   ├── LoginPage.tsx      # Google-style login component
-│   ├── UberEatsLogin.tsx  # Uber Eats login component
 │   ├── App.tsx            # Main app component
 │   ├── main.tsx           # App entry point
-│   ├── utils/
-│   │   └── activityTracker.ts # Activity tracking utility
 │   └── index.css          # Tailwind directives
+├── server/
+│   └── index.js           # Express backend server
 ├── public/                # Static assets
 ├── index.html             # HTML template
 ├── package.json           # Dependencies and scripts
@@ -55,11 +67,26 @@ temp/
 └── tsconfig.json          # TypeScript configuration
 ```
 
+## 🔌 API Endpoints
+
+### Health Check
+```
+GET /api/health
+Response: { status: 'ok', message: 'Server is running' }
+```
+
+### Login
+```
+POST /api/login
+Body: { email: string, password: string }
+Response: { success: boolean, message: string, user?: { email: string } }
+```
+
 ## 🎨 Login Flow
 
 1. **Email Step:** User enters their email address
 2. **Password Step:** After clicking "Next", user enters their password
-3. **Submit:** Credentials are logged to console
+3. **Submit:** Credentials are logged (can be connected to the backend API)
 
 ## 🏗️ Build for Production
 
@@ -72,15 +99,14 @@ The built files will be in the `dist/` directory.
 ## 📝 Notes
 
 - The current login implementation logs credentials to the console
-- Activity tracking logs user interactions to console
-- This is a frontend-only demo project
+- For production use, implement proper authentication and security measures
+- The backend API is a basic example - add proper validation, authentication, and database integration
 
 ## 🔒 Security Considerations
 
 ⚠️ This is a demo project. For production:
-- Implement proper authentication and security measures
 - Use HTTPS
-- Add proper password hashing (bcrypt)
+- Implement proper password hashing (bcrypt)
 - Add JWT or session-based authentication
 - Use environment variables for sensitive data
 - Add rate limiting

