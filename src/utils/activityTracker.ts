@@ -1,5 +1,5 @@
 // Activity Tracker Utility
-// Tracks user interactions and sends to backend
+// Tracks user interactions and logs to console
 
 interface ActivityData {
   sessionId: string;
@@ -30,7 +30,7 @@ const getUserInfo = () => ({
   platform: navigator.platform,
 });
 
-// Send activity to backend
+// Send activity to console
 export const trackActivity = async (action: string, target: string, value?: string, page?: string) => {
   const activityData: ActivityData = {
     sessionId: getSessionId(),
@@ -42,21 +42,7 @@ export const trackActivity = async (action: string, target: string, value?: stri
     ...getUserInfo(),
   };
 
-  try {
-    const apiUrl = import.meta.env.PROD 
-      ? '/api/track-activity' 
-      : 'http://localhost:3001/api/track-activity';
-    
-    await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(activityData),
-    });
-  } catch (error) {
-    console.error('Failed to track activity:', error);
-  }
+  console.log(`Activity tracked: ${action} on ${target}`, activityData);
 };
 
 // Track input focus
